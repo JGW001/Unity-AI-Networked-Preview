@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using TMPro;
 
 /// <summary> The core of the bots thinking, this is derived for zombies</summary>
 public class BaseBot : NetworkBehaviour
@@ -8,6 +9,10 @@ public class BaseBot : NetworkBehaviour
     [SerializeField] bool enableMovement = true;                    // If set to true, movement logic will be applied upon spawning of the AI
     [SerializeField] bool enableCombat = true;                      // If set to true, combat logic will be applied upon spawning of the AI
     [SerializeField] public bool enableRagdoll = false;             // Enable / Disable ragdoll, ragdolls are extremely expensive & slow to network so I left them clientsided, can switch to a death animation instead.
+    [SerializeField] bool enableDebugging = false;                  // Enable or disable debugging for all the components
+
+    [Header("Bot Nameplate")]
+    [SerializeField] protected TextMeshProUGUI botNameTag = null;   // The nametag of the bot, if any, zombies have random names and players have their playerId
 
     [Header("Bot Variables")]
     Functions.BotState currentBotState = Functions.BotState.Idle;   // The current state of the bot
@@ -16,7 +21,7 @@ public class BaseBot : NetworkBehaviour
     bool brainActive = true;                                        // Is the AI brain active or not, setting to false will completely stop calculations.
     bool isInCombat = false;                                        // Is the bot in combat?
     protected bool isCloseToTarget = false;                         // Is the bot close to its target?
-    [SerializeField] public Transform currentTarget = null;                // The current target of the bot
+    [SerializeField] public Transform currentTarget = null;         // The current target of the bot
 
     float currentOutOfCombatTime = 0f;                              // Saved amount of seconds the bot has been out of combat
     float outOfCombatTime = 25f;                                    // Amount of seconds to be out of combat before heading to the center of map for combat
@@ -33,6 +38,9 @@ public class BaseBot : NetworkBehaviour
     /// <summary> The skin of the zombie, to synchronize with connected clients, we use uint to reduce packet size.</summary>
     [SerializeField] protected NetworkVariable<uint> botSkin = new NetworkVariable<uint>();
 
+    /// <summary> The name of the player / zombie.</summary>
+    [SerializeField] protected NetworkVariable<NetworkString> botName = new NetworkVariable<NetworkString>();
+
     #region Standard functions (Awake, Update etc)
     /// <summary> This will run immediately when the object has been spawned over the network</summary>
     public override void OnNetworkSpawn()
@@ -43,6 +51,8 @@ public class BaseBot : NetworkBehaviour
             botCombat = gameObject.AddComponent(typeof(BotCombat)) as BotCombat;        // Add combat component
             botCombat.botAnimator = GetComponent<BotAnimator>();                        // Attach the botanimator
             botCombat.botAnimator.animator = GetComponent<Animator>();                  // Attach the animator to the custom bot animator script
+
+            botCombat.enableDebugging = enableDebugging;
         }
 
         // What only needs to be run on the server.
@@ -56,6 +66,7 @@ public class BaseBot : NetworkBehaviour
                 botMovement = gameObject.AddComponent(typeof(BotMovement)) as BotMovement;  // Add movement component
                 botMovement.botAnimator = GetComponent<Animator>();                         // Attach animator component
                 botMovement.navMeshBot = GetComponent<UnityEngine.AI.NavMeshAgent>();       // Attach navmeshagent component
+                botMovement.enableDebugging = enableDebugging;
             }
 
             _savedBrainReactionTime = brainReactionTime;
@@ -177,7 +188,9 @@ public class BaseBot : NetworkBehaviour
                 // If bot has no targets in the list of interest, leave combat
                 if (botCombat.targetsOfInterest.Count == 0)
                 {
-                    Functions.DebugMessage($"{gameObject.name} did not have any targets in the list of interests, resetting combat", Functions.DebugTypes.ERROR);
+                    if(enableDebugging)
+                        Functions.DebugMessage($"{gameObject.name} did not have any targets in the list of interests, resetting combat", Functions.DebugTypes.ERROR);
+
                     ToggleCombatValues(false);
                     return;
                 }
@@ -185,7 +198,9 @@ public class BaseBot : NetworkBehaviour
                 // If current target is no longer in the list of interested targets, leave combat
                 if(!botCombat.targetsOfInterest.Contains(currentTarget.gameObject))
                 {
-                    Functions.DebugMessage($"{gameObject.name} did not have {currentTarget.gameObject.name} as a target of interest, resetting combat", Functions.DebugTypes.ERROR);
+                    if(enableDebugging)
+                        Functions.DebugMessage($"{gameObject.name} did not have {currentTarget.gameObject.name} as a target of interest, resetting combat", Functions.DebugTypes.ERROR);
+
                     ToggleCombatValues(false);
                     return;
                 }
@@ -231,7 +246,9 @@ public class BaseBot : NetworkBehaviour
     /// <summary> Transitioning to other states</summary>
     public virtual void OnStateChange(Functions.BotState newState)
     {
-        Functions.DebugMessage($"OnStateChange: {gameObject.name} is changing state from {(Functions.BotState)currentBotState} to {(Functions.BotState)newState}", Functions.DebugTypes.INFO);
+        if(enableDebugging)
+            Functions.DebugMessage($"OnStateChange: {gameObject.name} is changing state from {(Functions.BotState)currentBotState} to {(Functions.BotState)newState}", Functions.DebugTypes.INFO);
+
         Functions.BotState _currentState = currentBotState;
 
         OnStateExit(_currentState, newState);           // OnStateExit event
@@ -309,6 +326,7 @@ public class BaseBot : NetworkBehaviour
     #endregion
 
     #region Other stuff
+
     /// <summary> Attempts to taunt the target, incase the target has no target</summary>
     /// <param name="attacker">The target that attacked this entity</param>
     public virtual void Taunt(Transform attacker)
@@ -323,12 +341,26 @@ public class BaseBot : NetworkBehaviour
 
     public virtual void InitializeBot()
     {
-        if(IsServer)
+        // For the local player, to assign camera to him.
+        if (IsOwner)
+        {
+            print($"running on {gameObject.name}");
+            var tmpCamera = Camera.main.transform.GetChild(0).GetComponent<Cinemachine.CinemachineVirtualCamera>();
+            tmpCamera.Follow = transform;
+            tmpCamera.LookAt = transform;
+        }
+
+        if (IsServer)
         {
             botSkin.Value = (uint)Random.Range(0, botMaterialSkins.Length);
             transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
         }
         else transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
+
+        if (botNameTag != null)
+        {
+            botNameTag.text = $"Player {OwnerClientId}";
+        }
     }
 
     public virtual void ToggleCombatValues(bool toggle)

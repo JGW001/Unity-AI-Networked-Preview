@@ -1,6 +1,4 @@
 using Unity.Netcode;
-using UnityEngine;
-
 public class HealthZombie : BaseHealth
 {
     public override void Start()

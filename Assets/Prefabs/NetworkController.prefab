@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7556905128023942692}
   - component: {fileID: 7556905128023942695}
+  - component: {fileID: 7556905128057631748}
   - component: {fileID: 7556905128023942694}
   m_Layer: 0
   m_Name: NetworkController
@@ -47,6 +48,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectionType: 0
   maxPlayers: 10
+--- !u!114 &7556905128057631748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7556905128023942689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59390e9d3ca6df946bdfdaedd123f7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  zombiesToSpawn: 10
+  spawnNewZombieTime: 5
+  spawnedZombies: []
 --- !u!114 &7556905128023942694
 MonoBehaviour:
   m_ObjectHideFlags: 0

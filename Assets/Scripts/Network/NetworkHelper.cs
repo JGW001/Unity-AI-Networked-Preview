@@ -5,15 +5,22 @@ using UnityEngine.SceneManagement;
 
 public class NetworkHelper : NetworkBehaviour
 {
-    [SerializeField] Functions.ConnectionType connectionType = Functions.ConnectionType.Client;                     // Here we save the connection type, even though its possible to get through IsClient etc..
-    [SerializeField] Dictionary<ulong, (string, string)> PlayerList = new Dictionary<ulong, (string, string)>();    // A list of connected spectators.
+    [SerializeField] Functions.ConnectionType connectionType = Functions.ConnectionType.Client;     // Here we save the connection type, even though its possible to get through IsClient etc..
+    [SerializeField] Dictionary<ulong, string> PlayerList = new Dictionary<ulong, string>();        // A list of connected spectators.
+    [SerializeField] GameController gameController = null;                                          // To access GameController functions
 
     public int maxPlayers = 10;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     private void Start()
     {
+        gameController = GetComponent<GameController>();
         NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
-        NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
+        NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
     }
 
     /// <summary>Starts the game as a host</summary>
@@ -82,12 +89,16 @@ public class NetworkHelper : NetworkBehaviour
         // Approve connection
         response.Approved = ApproveConnection(ref response);
         response.CreatePlayerObject = false;
-        response.Position = Vector3.zero;
+        response.Position = Functions.GetRandomPositionWithinDistance(this.transform, 10f);
         response.Rotation = Quaternion.identity;
         response.Pending = false;
 
         if(response.Approved)
-            PlayerList.Add(clientId, ($"{parsedConnectionDataArray[0]}", $"Spectator {clientId}"));
+        {
+            PlayerList.Add(clientId, ($"Name {clientId}"));
+            print($"Added {clientId} to playerlist");
+            gameController.SpawnPlayer(clientId);
+        }
     }
 
     public bool ApproveConnection(ref NetworkManager.ConnectionApprovalResponse response)
@@ -101,11 +112,16 @@ public class NetworkHelper : NetworkBehaviour
         return true;
     }
 
-    private void OnClientDisconnectCallback(ulong obj)
+    private void OnClientDisconnectCallback(ulong clientId)
     {
         if (!NetworkManager.IsServer && NetworkManager.DisconnectReason != string.Empty)
         {
             Debug.Log($"Approval Declined Reason: {NetworkManager.DisconnectReason}");
+        }
+        else
+        {
+            print($"Removed {clientId} from playerlist");
+            PlayerList.Remove(clientId);
         }
     }
 }

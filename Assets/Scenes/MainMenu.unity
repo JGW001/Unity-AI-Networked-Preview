@@ -1085,6 +1085,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3073139610832121675, guid: 501b39a00100d5545841b7fc4b5fa3be,
+        type: 3}
+      propertyPath: NetworkConfig.PlayerPrefab
+      value: 
+      objectReference: {fileID: 8302140511549693040, guid: 80d8eca93a3c1de4b89214285a57a8f0,
+        type: 3}
     - target: {fileID: 3073139610832121676, guid: 501b39a00100d5545841b7fc4b5fa3be,
         type: 3}
       propertyPath: m_RootOrder
@@ -1152,7 +1158,7 @@ PrefabInstance:
     - target: {fileID: 7556905128023942689, guid: 69c787eac7ec3d54f8e5bf56742539b1,
         type: 3}
       propertyPath: m_Name
-      value: NetworkController
+      value: GameController
       objectReference: {fileID: 0}
     - target: {fileID: 7556905128023942692, guid: 69c787eac7ec3d54f8e5bf56742539b1,
         type: 3}
@@ -1162,17 +1168,17 @@ PrefabInstance:
     - target: {fileID: 7556905128023942692, guid: 69c787eac7ec3d54f8e5bf56742539b1,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 534.94714
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7556905128023942692, guid: 69c787eac7ec3d54f8e5bf56742539b1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 286.6157
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7556905128023942692, guid: 69c787eac7ec3d54f8e5bf56742539b1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -228.56801
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7556905128023942692, guid: 69c787eac7ec3d54f8e5bf56742539b1,
         type: 3}
@@ -1213,11 +1219,6 @@ PrefabInstance:
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1387651160
-      objectReference: {fileID: 0}
-    - target: {fileID: 7556905128023942695, guid: 69c787eac7ec3d54f8e5bf56742539b1,
-        type: 3}
-      propertyPath: maxPlayers
-      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69c787eac7ec3d54f8e5bf56742539b1, type: 3}

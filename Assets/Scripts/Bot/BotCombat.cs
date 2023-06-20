@@ -34,7 +34,7 @@ public class BotCombat : MonoBehaviour
     [HideInInspector] public BotAnimator botAnimator = null;                // botAnimator component
 
     [Header("Debugging")]
-    [SerializeField] bool enableDebugging = true;                           // Enable or disable BotCombat debugging
+    [SerializeField] public bool enableDebugging = true;                           // Enable or disable BotCombat debugging
 
     private void Awake()
     {

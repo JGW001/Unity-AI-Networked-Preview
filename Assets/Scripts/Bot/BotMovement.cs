@@ -7,7 +7,7 @@ public class BotMovement : MonoBehaviour
     [HideInInspector] public Animator botAnimator = null;           // Bot Animator
 
     [Header("Debugging")]
-    [SerializeField] bool enableDebugging = true;                   // Enable or disable BotMovement debugging
+    [SerializeField] public bool enableDebugging = true;                   // Enable or disable BotMovement debugging
 
     /// <summary> Movement logic for the bot, which will also apply speed boost incase the target is far away</summary>
     public virtual void Move(Vector3 position)

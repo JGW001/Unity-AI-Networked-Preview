@@ -20,7 +20,7 @@ public class GameController : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        SpawnPlayer();
+        //SpawnPlayer(OwnerClientId);
 
         for (int i = 0; i < zombiesToSpawn; i++)
         {
@@ -30,11 +30,11 @@ public class GameController : NetworkBehaviour
         InvokeRepeating("SpawnZombie", 15f, spawnNewZombieTime);
     }
 
-    void SpawnPlayer()
+    public void SpawnPlayer(ulong clientId)
     {
         GameObject tmpPlayer = Instantiate(Resources.Load("(BOT) Boss") as GameObject);
-        tmpPlayer.transform.SetPositionAndRotation(new Vector3(0,0,0), new Quaternion(0, Random.Range(0, 200), 0, 0));
-        tmpPlayer.GetComponent<NetworkObject>().Spawn();
+        tmpPlayer.transform.SetPositionAndRotation(Functions.GetRandomPositionWithinDistance(this.transform, 10f), new Quaternion(0, Random.Range(0, 200), 0, 0));
+        tmpPlayer.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
     }
 
     void SpawnZombie()

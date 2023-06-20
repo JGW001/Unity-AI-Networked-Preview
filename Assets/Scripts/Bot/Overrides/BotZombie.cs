@@ -1,13 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
 /// <summary> A derived BaseBot class for the zombies</summary>
 public class BotZombie : BaseBot
 {
+    public List<string> botNames;
+
     #region Overridden functions
     // Overridden InitializeBot to change some values so they don't behave exactly like humans.
     public override void InitializeBot()
     {
         if (IsServer)
         {
+            botName.Value = botNames[Random.Range(0, botNames.Count)];
+
             if(botCombat)
             {
                 // We change some variables for the zombies, so they aren't exactly as the humans
@@ -19,6 +24,8 @@ public class BotZombie : BaseBot
             transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
         }
         else transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
+
+        botNameTag.text = botName.Value;
     }
 
     // Overridden OnStateEnter for the zombies, to reduce their "next action" time, so they are a bit more "alive"
