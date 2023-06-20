@@ -17,3 +17,6 @@ A smaller project to showcase some basic networked AI behaviour
 * Zombies have different values from the player, they have a wider detection range, these changes are overridden in BotZombie
 * Debugging can be enabled and disabled on the components
 * Targets are taunted incase they have no target
+* Each connected client has his own fighter, there is no way to control him though
+* Players & zombies have nametags, which are synchronized
+* The camera attaches to the player that you own & follows him
