@@ -39,6 +39,10 @@ public class GameController : NetworkBehaviour
 
     void SpawnZombie()
     {
+        // Change the values based on connected clients
+        zombiesToSpawn = NetworkManager.ConnectedClients.Count * 10;
+        maxZombies = NetworkManager.ConnectedClients.Count * 15;
+
         CleanUpZombies();   // Could be done in a better way, but we just clean up the list before adding a new.
 
         // Spawn a new one, if the limit has not been reached.
