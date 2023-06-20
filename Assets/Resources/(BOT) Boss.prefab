@@ -100,8 +100,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2048,14 +2048,14 @@ MonoBehaviour:
   enableMovement: 1
   enableCombat: 1
   enableRagdoll: 0
+  enableDebugging: 0
   botNameTag: {fileID: 3358001104059302968}
   brainTimer: 0
   brainReactionTime: 0
   currentTarget: {fileID: 0}
   botMaterialSkins:
   - {fileID: 2100000, guid: 4205edfc5fe93f34588eb2cb914feabd, type: 2}
-  botSkin:
-    m_InternalValue: 0
+  killCounter: {fileID: 0}
 --- !u!114 &8302140511549587543
 MonoBehaviour:
   m_ObjectHideFlags: 0

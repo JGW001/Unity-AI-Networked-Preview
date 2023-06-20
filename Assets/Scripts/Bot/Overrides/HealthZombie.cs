@@ -1,9 +1,12 @@
 using Unity.Netcode;
+using DG.Tweening;
+using UnityEngine;
+
 public class HealthZombie : BaseHealth
 {
     public override void Start()
     {
-        botHealth = 10;        // Zombies have lower amount of HP
+        botHealth = 15;        // Zombies have lower amount of HP
     }
 
     public override void TakeDamage(int amount)
@@ -16,14 +19,30 @@ public class HealthZombie : BaseHealth
 
             if(IsServer)
             {
+                GetComponent<BaseBot>().killCounter.IncreaseCounter();
                 Destroy(gameObject, 10f);   // On the server side we will destroy the zombie after X seconds, which will also automatically sync with clients
             }
         }
+        else TakeDamageClientRpc((uint)amount);
+    }
+
+    [ClientRpc]
+    public override void TakeDamageClientRpc(uint amount)
+    {
+        botHealth = (int)amount;
+        gameObject.transform.DOShakeScale(.2f, 0.1f).OnComplete(ResetScale);
     }
 
     [ClientRpc]
     public override void ExecuteEntityClientRpc()
     {
-        base.ExecuteEntityClientRpc();     // Call base for ragdoll logic
+        gameObject.GetComponent<Collider>().enabled = false;
+        gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
+
+        if (gameObject.GetComponent<BaseBot>().enableRagdoll)
+            gameObject.GetComponent<Animator>().enabled = false;
+        else gameObject.GetComponent<Animator>().SetBool("isDead", true);
+
+        gameObject.GetComponent<BaseBot>().enabled = false;
     }
 }

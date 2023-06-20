@@ -7,6 +7,7 @@ public class BotCombat : MonoBehaviour
 {
     [Header("Combat Variables")]
     public float minAttackRange = 2.2f;                                     // The minimum attack range
+    public int botDamage = 10;                                              // The damage this bot deals
 
     // Detection of nearby targets variables
     public float sphereCastDistance = 7f;                                   // The distance of the raycasts
@@ -27,14 +28,14 @@ public class BotCombat : MonoBehaviour
     Coroutine damageCheckDelayCoroutine;                                    // The saved coroutine for damage checking
 
     // List of targets which are in the interest of the bot
-    public List<GameObject> targetsOfInterest = new List<GameObject>();
-    public float targetOutOfRangeDistance = 20f;
+    public List<GameObject> targetsOfInterest = new List<GameObject>();     
+    public float targetOutOfRangeDistance = 20f;                            
 
     // Components
     [HideInInspector] public BotAnimator botAnimator = null;                // botAnimator component
 
     [Header("Debugging")]
-    [SerializeField] public bool enableDebugging = true;                           // Enable or disable BotCombat debugging
+    [SerializeField] public bool enableDebugging = true;                    // Enable or disable BotCombat debugging
 
     private void Awake()
     {
@@ -89,7 +90,8 @@ public class BotCombat : MonoBehaviour
             // Target is out of attack range
             if (Vector3.Distance(target.transform.position, transform.position) > minAttackRange) 
                 continue;
-            target.transform.GetComponent<BaseHealth>().TakeDamage(Random.Range(10, 20));
+
+            target.transform.GetComponent<BaseHealth>().TakeDamage(botDamage);
 
             var tmpBot = target.transform.GetComponent<BaseBot>();
             tmpBot.Taunt(this.transform);
@@ -154,6 +156,12 @@ public class BotCombat : MonoBehaviour
 
         for (int i = 0; i < targetsOfInterest.Count; i++)
         {
+            if (targetsOfInterest[i].transform == null)
+            {
+                targetsOfInterest.RemoveAt(i);
+                continue;
+            }
+
             if(Vector3.Distance(targetsOfInterest[i].transform.position, transform.position) < savedDistance)
             {
                 savedDistance = Vector3.Distance(targetsOfInterest[i].transform.position, transform.position);
@@ -177,7 +185,7 @@ public class BotCombat : MonoBehaviour
             // Remove interest from target if it has been destroyed
             if (targetsOfInterest[i] == null)
             {
-                targetsOfInterest.Remove(targetsOfInterest[i]);
+                targetsOfInterest.RemoveAt(i);
             }
 
             // Remove interest from target if too far away

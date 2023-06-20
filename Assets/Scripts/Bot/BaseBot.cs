@@ -31,15 +31,46 @@ public class BaseBot : NetworkBehaviour
     [SerializeField] public Material[] botMaterialSkins = null;
 
     // Components, extras
-    protected BotCombat botCombat = null;                             // botCombat componen
-    protected BotMovement botMovement = null;                         // botMovement component
+    protected BotCombat botCombat = null;                               // botCombat componen
+    protected BotMovement botMovement = null;                           // botMovement component
+    [HideInInspector] public KillCounter killCounter = null;            // To update kill counter
 
     // Networked Variables
     /// <summary> The skin of the zombie, to synchronize with connected clients, we use uint to reduce packet size.</summary>
-    [SerializeField] protected NetworkVariable<uint> botSkin = new NetworkVariable<uint>();
+    [HideInInspector] protected NetworkVariable<uint> botSkin = new NetworkVariable<uint>();
 
+    [Space][Header("Bot Names")]
     /// <summary> The name of the player / zombie.</summary>
-    [SerializeField] protected NetworkVariable<NetworkString> botName = new NetworkVariable<NetworkString>();
+    [HideInInspector] protected NetworkVariable<NetworkString> botName = new NetworkVariable<NetworkString>();
+
+    #region Bot Setup
+    public virtual void InitializeBot()
+    {
+        // For the local player, to assign camera to him.
+        if (IsOwner)
+        {
+            var tmpCamera = Camera.main.transform.GetChild(0).GetComponent<Cinemachine.CinemachineVirtualCamera>();
+            tmpCamera.Follow = transform;
+            tmpCamera.LookAt = transform;
+
+            killCounter = GameObject.Find("Canvas").transform.GetChild(0).GetComponent<KillCounter>();
+        }
+
+        if (IsServer)
+        {
+            botSkin.Value = (uint)Random.Range(0, botMaterialSkins.Length);
+            transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
+        }
+        else transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
+
+        if (botNameTag != null)
+        {
+            botNameTag.text = $"Player {OwnerClientId}";
+        }
+
+        gameObject.name = $"(PLAYER) {OwnerClientId}";
+    }
+    #endregion
 
     #region Standard functions (Awake, Update etc)
     /// <summary> This will run immediately when the object has been spawned over the network</summary>
@@ -326,7 +357,6 @@ public class BaseBot : NetworkBehaviour
     #endregion
 
     #region Other stuff
-
     /// <summary> Attempts to taunt the target, incase the target has no target</summary>
     /// <param name="attacker">The target that attacked this entity</param>
     public virtual void Taunt(Transform attacker)
@@ -336,30 +366,6 @@ public class BaseBot : NetworkBehaviour
             currentTarget = attacker;
             isInCombat = true;
             OnStateChange(Functions.BotState.Attack);
-        }
-    }
-
-    public virtual void InitializeBot()
-    {
-        // For the local player, to assign camera to him.
-        if (IsOwner)
-        {
-            print($"running on {gameObject.name}");
-            var tmpCamera = Camera.main.transform.GetChild(0).GetComponent<Cinemachine.CinemachineVirtualCamera>();
-            tmpCamera.Follow = transform;
-            tmpCamera.LookAt = transform;
-        }
-
-        if (IsServer)
-        {
-            botSkin.Value = (uint)Random.Range(0, botMaterialSkins.Length);
-            transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
-        }
-        else transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
-
-        if (botNameTag != null)
-        {
-            botNameTag.text = $"Player {OwnerClientId}";
         }
     }
 

@@ -12,12 +12,14 @@ public class BotZombie : BaseBot
         if (IsServer)
         {
             botName.Value = botNames[Random.Range(0, botNames.Count)];
+            killCounter = GameObject.Find("Canvas").transform.GetChild(0).GetComponent<KillCounter>();
 
-            if(botCombat)
+            if (botCombat)
             {
                 // We change some variables for the zombies, so they aren't exactly as the humans
                 botCombat.targetOutOfRangeDistance = 25f;   // Increase "Out Of Sight/Range" for zombies
                 botCombat.sphereCastRadius = 12;            // Increase the detection range of humans for zombies
+                botCombat.botDamage = 4;                    // Reduce zombie damage
             }
 
             botSkin.Value = (uint)Random.Range(0, botMaterialSkins.Length);
@@ -26,6 +28,7 @@ public class BotZombie : BaseBot
         else transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = botMaterialSkins[(int)botSkin.Value];
 
         botNameTag.text = botName.Value;
+        gameObject.name = $"(BOT) {botName.Value}";
     }
 
     // Overridden OnStateEnter for the zombies, to reduce their "next action" time, so they are a bit more "alive"
