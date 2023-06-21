@@ -10,6 +10,7 @@ public class BaseHealth : NetworkBehaviour
     [SerializeField] public int botHealth;                              // The health of the bot
     [SerializeField] public Slider healthSlider = null;                 // The UI Slider
     [SerializeField] protected TextMeshProUGUI healthText = null;       // The health text
+    [SerializeField] protected Image takeDamageEffect = null;           // The take damage fade effect
 
     public virtual void Start()
     {
@@ -24,6 +25,7 @@ public class BaseHealth : NetworkBehaviour
 
             healthSlider = tmpCanvas.transform.GetChild(1).GetComponent<Slider>();
             healthText = tmpCanvas.transform.GetChild(1).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+            takeDamageEffect = tmpCanvas.transform.GetChild(2).GetComponent<Image>();
         }
     }
 
@@ -52,6 +54,15 @@ public class BaseHealth : NetworkBehaviour
 
         if(IsOwner)
         {
+            takeDamageEffect.gameObject.SetActive(true);
+            takeDamageEffect.DOFade(.7f, .1f).SetEase(Ease.OutCirc).OnComplete(() =>
+            {
+                takeDamageEffect.DOFade(0, .1f).OnComplete(() =>
+                {
+                    takeDamageEffect.gameObject.SetActive(false);
+                });
+            });
+
             botHealth -= (int)amount;
             healthSlider.value = botHealth;
             healthText.text = $"{botHealth}";

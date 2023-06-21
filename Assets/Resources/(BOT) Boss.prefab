@@ -1934,7 +1934,7 @@ GameObject:
   - component: {fileID: 8302140511559217079}
   - component: {fileID: 8302140511559217077}
   - component: {fileID: 8302140511559217076}
-  - component: {fileID: 8302140511549587541}
+  - component: {fileID: 1539726050837848937}
   - component: {fileID: 8302140511549587543}
   - component: {fileID: 784181337530937972}
   - component: {fileID: 8216473974262326189}
@@ -2033,7 +2033,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
---- !u!114 &8302140511549587541
+--- !u!114 &1539726050837848937
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2042,7 +2042,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8302140511549693040}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c451d4aa9b23d3f49979d207b7ff6a33, type: 3}
+  m_Script: {fileID: 11500000, guid: cc010e772bd01e741bf4463c1e6fe787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enableMovement: 1
@@ -2053,6 +2053,7 @@ MonoBehaviour:
   brainTimer: 0
   brainReactionTime: 0
   currentTarget: {fileID: 0}
+  orderedPosition: {x: 0, y: 0, z: 0}
   botMaterialSkins:
   - {fileID: 2100000, guid: 4205edfc5fe93f34588eb2cb914feabd, type: 2}
   killCounter: {fileID: 0}
@@ -2069,6 +2070,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   botHealth: 200
+  healthSlider: {fileID: 0}
+  healthText: {fileID: 0}
 --- !u!114 &784181337530937972
 MonoBehaviour:
   m_ObjectHideFlags: 0

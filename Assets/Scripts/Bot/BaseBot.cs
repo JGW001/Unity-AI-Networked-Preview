@@ -26,14 +26,15 @@ public class BaseBot : NetworkBehaviour
     float currentOutOfCombatTime = 0f;                              // Saved amount of seconds the bot has been out of combat
     float outOfCombatTime = 25f;                                    // Amount of seconds to be out of combat before heading to the center of map for combat
     float _savedBrainReactionTime;
+    public Vector3 orderedPosition = Vector3.zero;                  // If the player orders his bot to move, we save it here, to check if the bot has arrived and can then continue brain logic
 
     [Header("Bot Skins")]
-    [SerializeField] public Material[] botMaterialSkins = null;
+    [SerializeField] public Material[] botMaterialSkins = null;     // Bot Materials for skins that can be applied
 
     // Components, extras
-    protected BotCombat botCombat = null;                               // botCombat componen
-    protected BotMovement botMovement = null;                           // botMovement component
-    [HideInInspector] public KillCounter killCounter = null;            // To update kill counter
+    protected BotCombat botCombat = null;                           // botCombat componen
+    protected BotMovement botMovement = null;                       // botMovement component
+    [HideInInspector] public KillCounter killCounter = null;        // To update kill counter
 
     // Networked Variables
     /// <summary> The skin of the zombie, to synchronize with connected clients, we use uint to reduce packet size.</summary>
@@ -126,6 +127,12 @@ public class BaseBot : NetworkBehaviour
     /// <summary> This is just a timer to trigger the brain logic</summary>
     public virtual void BrainTimer()
     {
+        if(orderedPosition != Vector3.zero)
+        {
+            if (Vector3.Distance(orderedPosition, transform.position) > 2) return;
+            else orderedPosition = Vector3.zero;
+        }
+
         // For smoother rotation/look at target
         if (currentTarget != null)
         {
@@ -357,6 +364,22 @@ public class BaseBot : NetworkBehaviour
     #endregion
 
     #region Other stuff
+
+    /// <summary> This function will reset all combat values, is used when a player orders his bot to move</summary>
+    public void ResetCombat()
+    {
+        if(currentBotState == Functions.BotState.Attack || currentBotState == Functions.BotState.Follow)
+        {
+            // Maybe make new state "Moving"
+            OnStateChange(Functions.BotState.Idle);
+        }
+
+        currentTarget = null;
+        isInCombat = false;
+        isCloseToTarget = false;
+        botCombat.targetsOfInterest.Clear();
+    }
+
     /// <summary> Attempts to taunt the target, incase the target has no target</summary>
     /// <param name="attacker">The target that attacked this entity</param>
     public virtual void Taunt(Transform attacker)

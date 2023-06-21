@@ -156,10 +156,10 @@ public class BotCombat : MonoBehaviour
 
         for (int i = 0; i < targetsOfInterest.Count; i++)
         {
-            if (targetsOfInterest[i].transform == null)
+            if (targetsOfInterest[i] == null)
             {
                 targetsOfInterest.RemoveAt(i);
-                continue;
+                break;
             }
 
             if(Vector3.Distance(targetsOfInterest[i].transform.position, transform.position) < savedDistance)
@@ -191,13 +191,13 @@ public class BotCombat : MonoBehaviour
             // Remove interest from target if too far away
             if (Vector3.Distance(transform.position, targetsOfInterest[i].transform.position) > targetOutOfRangeDistance)
             {
-                targetsOfInterest.Remove(targetsOfInterest[i].gameObject);
+                targetsOfInterest.RemoveAt(i);
             }
 
             // TESTERINO: remove target from interest if animator is disabled
             if (targetsOfInterest[i].GetComponent<BaseHealth>().botHealth <= 0)
             {
-                targetsOfInterest.Remove(targetsOfInterest[i].gameObject);
+                targetsOfInterest.RemoveAt(i);
             }
 
         }
@@ -210,7 +210,6 @@ public class BotCombat : MonoBehaviour
 
         return true;
     }
-
     #endregion
 
     #region Unity functions

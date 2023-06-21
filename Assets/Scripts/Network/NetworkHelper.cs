@@ -124,11 +124,11 @@ public class NetworkHelper : NetworkBehaviour
             print($"Removed {clientId} from playerlist");
             PlayerList.Remove(clientId);
 
-            if(IsServer)
+            /*if(IsServer)
             {
                 if(NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.gameObject != null)
                     Destroy(NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.gameObject);
-            }
+            }*/
         }
     }
 }

@@ -65,11 +65,27 @@ public class Functions : MonoBehaviour
         return;
     }
 
+    /// <summary> Returns a random position within a distance from the given transform</summary>
     public static Vector3 GetRandomPositionWithinDistance(Transform transform, float distance)
     {
         float offsetX = Random.Range(-distance, distance);
         float offsetZ = Random.Range(-distance, distance);
 
         return new Vector3(transform.position.x + offsetX, 0, transform.position.z + offsetZ);
+    }
+
+    /// <summary> Gets the world position from mouse position</summary>
+    public static Vector3 GetMouseWorldPosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            return hit.point;
+        }
+
+        // Return a default position if no object was hit
+        return Vector3.zero;
     }
 }
