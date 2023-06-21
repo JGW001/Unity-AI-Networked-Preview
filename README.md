@@ -17,9 +17,10 @@ A smaller project to showcase some basic networked AI behaviour
 * Zombies have different values from the player, they have a wider detection range, these changes are overridden in BotZombie
 * Debugging can be enabled and disabled on the components
 * Targets are taunted incase they have no target
-* Each connected client has his own fighter, there is no way to control him though (yet)
+* Each connected client has his own fighter, which he can move around by clicking the floor
 * Players & zombies have nametags, which are synchronized
 * The camera attaches to the player that you own & follows him
 * Players are able to see a total zombie kills at the top of their screen, which is a global shared stat
 * Players have their own healthbar at the bottom of the screen
 * Small hit effects on entities (ScalePunch effect from DOTween)
+* Screen hit effect (Red flash)
